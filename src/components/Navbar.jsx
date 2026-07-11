@@ -16,13 +16,8 @@ function Navbar() {
     <header className="sticky top-0 z-50 w-full bg-white/85 backdrop-blur-md border-b border-border-light">
       <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
         {/* Logo */}
-        <Link to="/" className="flex items-center gap-1.5 hover:opacity-90 transition-all-fast select-none">
-          <span className="bg-btn-dark text-white rounded-[6px] px-2.5 py-1 text-sm font-bold tracking-wide">
-            AKTU
-          </span>
-          <span className="font-bold text-sm tracking-wide text-primary-text ml-0.5">
-            HUB
-          </span>
+        <Link to="/" className="flex items-center hover:opacity-90 transition-all-fast select-none">
+          <img src="/logo.png" alt="AKTU HUB" className="h-8 w-auto object-contain" />
         </Link>
 
         {/* Desktop Navigation */}
