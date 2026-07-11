@@ -1,9 +1,13 @@
 import { useParams, Link } from "react-router-dom";
+import { useState, useEffect } from "react";
 import { ChevronRight, FileText, HelpCircle, FileSpreadsheet, FlaskConical, Book, ArrowUpRight } from "lucide-react";
 import resources from "../Data/resources";
+import { supabase } from "../supabaseClient";
 
 function SubjectPage() {
   const { id, subject } = useParams();
+  const [subjectData, setSubjectData] = useState({});
+  const [loading, setLoading] = useState(true);
   
   // Format subject name from URL slug
   const subjectName = subject
@@ -23,7 +27,45 @@ function SubjectPage() {
 
   const slug = subject ? subject.toLowerCase().replaceAll(" ", "-").replace(/[^a-z0-9-]/g, "") : "";
   const rawSlug = subject ? subject.toLowerCase() : "";
-  const subjectData = resources[slug] || resources[rawSlug] || {};
+
+  // Query resources from Supabase
+  useEffect(() => {
+    const fetchResources = async () => {
+      setLoading(true);
+      try {
+        const formattedName = subject.replaceAll("-", " ");
+        
+        // Find subject and nested resources
+        const { data: dbSubject, error } = await supabase
+          .from("subjects")
+          .select("*, resources(*)")
+          .ilike("subject_name", formattedName)
+          .maybeSingle();
+
+        if (error) throw error;
+
+        if (dbSubject && dbSubject.resources && dbSubject.resources.length > 0) {
+          const formattedRes = {};
+          dbSubject.resources.forEach(r => {
+            formattedRes[r.resource_type] = r.storage_url;
+          });
+          setSubjectData(formattedRes);
+        } else {
+          // Fallback to local files list
+          const localData = resources[slug] || resources[rawSlug] || {};
+          setSubjectData(localData);
+        }
+      } catch (err) {
+        console.warn("Supabase fetch failed, falling back to local files:", err.message);
+        const localData = resources[slug] || resources[rawSlug] || {};
+        setSubjectData(localData);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchResources();
+  }, [subject, id, slug, rawSlug]);
 
   const resourceTypes = [
     {
@@ -85,66 +127,72 @@ function SubjectPage() {
         </h1>
       </div>
 
-      {/* Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {resourceTypes.map((res) => {
-          const Icon = res.icon;
-          const hasLink = res.url && res.url.trim() !== "";
+      {loading ? (
+        <div className="text-center py-16 text-secondary-text text-sm">
+          Loading file downloads...
+        </div>
+      ) : (
+        /* Grid */
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {resourceTypes.map((res) => {
+            const Icon = res.icon;
+            const hasLink = res.url && res.url.trim() !== "";
 
-          if (hasLink) {
-            return (
-              <a
-                key={res.key}
-                href={res.url}
-                target="_blank"
-                rel="noreferrer"
-                className="card-premium group p-6 flex flex-col justify-between min-h-[160px] hover:border-btn-dark focus:outline-none focus:ring-2 focus:ring-btn-dark focus:ring-offset-2"
-              >
-                <div>
-                  <div className="flex items-start justify-between mb-3">
-                    <div className="p-2.5 bg-bg-secondary rounded-lg text-primary-text group-hover:bg-btn-dark group-hover:text-white transition-all-fast">
-                      <Icon size={20} />
+            if (hasLink) {
+              return (
+                <a
+                  key={res.key}
+                  href={res.url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="card-premium group p-6 flex flex-col justify-between min-h-[160px] hover:border-btn-dark focus:outline-none focus:ring-2 focus:ring-btn-dark focus:ring-offset-2"
+                >
+                  <div>
+                    <div className="flex items-start justify-between mb-3">
+                      <div className="p-2.5 bg-bg-secondary rounded-lg text-primary-text group-hover:bg-btn-dark group-hover:text-white transition-all-fast">
+                        <Icon size={20} />
+                      </div>
+                      <ArrowUpRight size={16} className="text-secondary-text group-hover:text-primary-text transition-all-fast transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
                     </div>
-                    <ArrowUpRight size={16} className="text-secondary-text group-hover:text-primary-text transition-all-fast transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                    <h3 className="text-lg font-bold text-primary-text mb-1">{res.name}</h3>
+                    <p className="text-sm text-secondary-text leading-snug">{res.desc}</p>
                   </div>
-                  <h3 className="text-lg font-bold text-primary-text mb-1">{res.name}</h3>
-                  <p className="text-sm text-secondary-text leading-snug">{res.desc}</p>
-                </div>
-                <div className="mt-4 text-xs font-semibold text-primary-text group-hover:underline flex items-center gap-1">
-                  View Resource
-                </div>
-              </a>
-            );
-          } else {
-            // Disabled / Coming soon state
-            return (
-              <div
-                key={res.key}
-                className="border border-dashed border-border-light bg-bg-secondary/40 rounded-custom-lg p-6 flex flex-col justify-between min-h-[160px] opacity-75"
-              >
-                <div>
-                  <div className="flex items-start justify-between mb-3">
-                    <div className="p-2.5 bg-bg-secondary rounded-lg text-secondary-text">
-                      <Icon size={20} />
+                  <div className="mt-4 text-xs font-semibold text-primary-text group-hover:underline flex items-center gap-1">
+                    View Resource
+                  </div>
+                </a>
+              );
+            } else {
+              /* Disabled / Coming soon state */
+              return (
+                <div
+                  key={res.key}
+                  className="border border-dashed border-border-light bg-bg-secondary/40 rounded-custom-lg p-6 flex flex-col justify-between min-h-[160px] opacity-75"
+                >
+                  <div>
+                    <div className="flex items-start justify-between mb-3">
+                      <div className="p-2.5 bg-bg-secondary rounded-lg text-secondary-text">
+                        <Icon size={20} />
+                      </div>
+                      {res.isFuture && (
+                        <span className="text-[10px] font-semibold tracking-wider uppercase text-secondary-text bg-white px-2 py-0.5 rounded border border-border-light">
+                          Future
+                        </span>
+                      )}
                     </div>
-                    {res.isFuture && (
-                      <span className="text-[10px] font-semibold tracking-wider uppercase text-secondary-text bg-white px-2 py-0.5 rounded border border-border-light">
-                        Future
-                      </span>
-                    )}
+                    <h3 className="text-lg font-bold text-secondary-text mb-1">{res.name}</h3>
+                    <p className="text-sm text-secondary-text/80 leading-snug">{res.desc}</p>
                   </div>
-                  <h3 className="text-lg font-bold text-secondary-text mb-1">{res.name}</h3>
-                  <p className="text-sm text-secondary-text/80 leading-snug">{res.desc}</p>
+                  <div className="mt-4 text-xs font-medium text-secondary-text/70 flex items-center gap-1.5">
+                    <span>📂</span>
+                    <span>Coming soon</span>
+                  </div>
                 </div>
-                <div className="mt-4 text-xs font-medium text-secondary-text/70 flex items-center gap-1.5">
-                  <span>📂</span>
-                  <span>Coming soon</span>
-                </div>
-              </div>
-            );
-          }
-        })}
-      </div>
+              );
+            }
+          })}
+        </div>
+      )}
     </div>
   );
 }

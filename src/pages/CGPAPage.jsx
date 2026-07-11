@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import SubjectsData from "../Data/SubjectData";
 import { Link } from "react-router-dom";
 import { ChevronRight, Calculator, RefreshCw, Save, Trash2, Award, Info } from "lucide-react";
+import { useAuth } from "../context/AuthContext";
+import { supabase } from "../supabaseClient";
 
 const GRADES = [
   { label: "Select Grade", value: "", point: 0 },
@@ -16,10 +18,12 @@ const GRADES = [
 ];
 
 function CGPAPage() {
+  const { user } = useAuth();
   const [branch, setBranch] = useState("CSE");
   const [selectedSem, setSelectedSem] = useState(1);
   const [courseGrades, setCourseGrades] = useState({});
   const [currentSgpa, setCurrentSgpa] = useState(null);
+  const [loadingDb, setLoadingDb] = useState(false);
   
   // Direct direct input or course-wise modes
   const [calculationMode, setCalculationMode] = useState("course"); // "course" or "direct"
@@ -27,11 +31,8 @@ function CGPAPage() {
     1: "", 2: "", 3: "", 4: "", 5: "", 6: "", 7: "", 8: ""
   });
 
-  // Saved GPA data in localStorage
-  const [savedGpas, setSavedGpas] = useState(() => {
-    const saved = localStorage.getItem("aktu_hub_gpas");
-    return saved ? JSON.parse(saved) : {};
-  });
+  // Saved GPA data
+  const [savedGpas, setSavedGpas] = useState({});
 
   // Load subject list for current semester
   const currentSubjects = SubjectsData.filter(
@@ -48,6 +49,53 @@ function CGPAPage() {
     setCurrentSgpa(null);
   }, [selectedSem, branch]);
 
+  // Load GPA data on mount or user change
+  useEffect(() => {
+    const loadGpaData = async () => {
+      if (user) {
+        setLoadingDb(true);
+        try {
+          const { data, error } = await supabase
+            .from("gpa_records")
+            .select("*")
+            .eq("user_id", user.id);
+          
+          if (error) throw error;
+          
+          const formatted = {};
+          const directInputs = { 1: "", 2: "", 3: "", 4: "", 5: "", 6: "", 7: "", 8: "" };
+          data.forEach((row) => {
+            formatted[row.semester] = {
+              sgpa: parseFloat(row.sgpa),
+              credits: row.credits,
+              type: "calculated"
+            };
+            directInputs[row.semester] = row.sgpa.toFixed(2);
+          });
+          setSavedGpas(formatted);
+          setDirectSgpaInputs(directInputs);
+        } catch (err) {
+          console.error("Error loading GPAs from database:", err.message);
+        } finally {
+          setLoadingDb(false);
+        }
+      } else {
+        // Fallback to localStorage
+        const saved = localStorage.getItem("aktu_hub_gpas");
+        const parsed = saved ? JSON.parse(saved) : {};
+        setSavedGpas(parsed);
+        
+        const directInputs = { 1: "", 2: "", 3: "", 4: "", 5: "", 6: "", 7: "", 8: "" };
+        Object.keys(parsed).forEach((sem) => {
+          directInputs[sem] = parsed[sem].sgpa.toFixed(2);
+        });
+        setDirectSgpaInputs(directInputs);
+      }
+    };
+
+    loadGpaData();
+  }, [user]);
+
   // Handle individual course grade selection
   const handleGradeChange = (subjectId, value) => {
     setCourseGrades((prev) => ({
@@ -60,7 +108,6 @@ function CGPAPage() {
   const calculateSgpa = () => {
     let totalPoints = 0;
     let totalCredits = 0;
-    let selectedCount = 0;
 
     currentSubjects.forEach((sub) => {
       const gradeVal = courseGrades[sub.id];
@@ -73,7 +120,6 @@ function CGPAPage() {
           totalPoints += points * sub.credits;
           totalCredits += sub.credits;
         }
-        selectedCount++;
       }
     });
 
@@ -87,36 +133,90 @@ function CGPAPage() {
   };
 
   // Save current SGPA (or direct input) to storage
-  const handleSaveSgpa = () => {
+  const handleSaveSgpa = async () => {
     if (calculationMode === "course") {
       if (currentSgpa === null) return;
+      const semVal = Number(selectedSem);
+      const sgpaVal = parseFloat(currentSgpa);
+      const semCredits = currentSubjects.reduce((acc, s) => acc + s.credits, 0);
+
       const updated = {
         ...savedGpas,
-        [selectedSem]: {
-          sgpa: parseFloat(currentSgpa),
-          credits: currentSubjects.reduce((acc, s) => acc + s.credits, 0),
+        [semVal]: {
+          sgpa: sgpaVal,
+          credits: semCredits,
           type: "calculated"
         }
       };
       setSavedGpas(updated);
-      localStorage.setItem("aktu_hub_gpas", JSON.stringify(updated));
+
+      if (user) {
+        try {
+          const { error } = await supabase
+            .from("gpa_records")
+            .upsert({
+              user_id: user.id,
+              semester: semVal,
+              sgpa: sgpaVal,
+              credits: semCredits
+            }, { onConflict: "user_id, semester" });
+          if (error) throw error;
+        } catch (err) {
+          console.error("Error saving GPA to database:", err.message);
+        }
+      } else {
+        localStorage.setItem("aktu_hub_gpas", JSON.stringify(updated));
+      }
     } else {
       const updated = { ...savedGpas };
+      const recordsToUpsert = [];
+
       Object.keys(directSgpaInputs).forEach((sem) => {
         const val = directSgpaInputs[sem];
+        const semVal = Number(sem);
         if (val !== "" && !isNaN(val)) {
-          // Estimate default credits per semester (around 22) for weighted CGPA
-          updated[sem] = {
-            sgpa: parseFloat(val),
+          const sgpaVal = parseFloat(val);
+          updated[semVal] = {
+            sgpa: sgpaVal,
             credits: 22, 
             type: "direct"
           };
+          if (user) {
+            recordsToUpsert.push({
+              user_id: user.id,
+              semester: semVal,
+              sgpa: sgpaVal,
+              credits: 22
+            });
+          }
         } else {
-          delete updated[sem];
+          delete updated[semVal];
         }
       });
       setSavedGpas(updated);
-      localStorage.setItem("aktu_hub_gpas", JSON.stringify(updated));
+
+      if (user) {
+        try {
+          // Clear previous records and insert new batch for direct mode
+          const { error: deleteError } = await supabase
+            .from("gpa_records")
+            .delete()
+            .eq("user_id", user.id);
+          
+          if (deleteError) throw deleteError;
+
+          if (recordsToUpsert.length > 0) {
+            const { error: insertError } = await supabase
+              .from("gpa_records")
+              .insert(recordsToUpsert);
+            if (insertError) throw insertError;
+          }
+        } catch (err) {
+          console.error("Error syncing direct GPAs to database:", err.message);
+        }
+      } else {
+        localStorage.setItem("aktu_hub_gpas", JSON.stringify(updated));
+      }
     }
   };
 
@@ -131,21 +231,54 @@ function CGPAPage() {
   };
 
   // Clear specific semester
-  const deleteSemesterGpa = (sem) => {
+  const deleteSemesterGpa = async (sem) => {
+    const semVal = Number(sem);
     const updated = { ...savedGpas };
-    delete updated[sem];
+    delete updated[semVal];
     setSavedGpas(updated);
-    localStorage.setItem("aktu_hub_gpas", JSON.stringify(updated));
+
+    if (user) {
+      try {
+        const { error } = await supabase
+          .from("gpa_records")
+          .delete()
+          .eq("user_id", user.id)
+          .eq("semester", semVal);
+        if (error) throw error;
+      } catch (err) {
+        console.error("Error deleting GPA from database:", err.message);
+      }
+    } else {
+      localStorage.setItem("aktu_hub_gpas", JSON.stringify(updated));
+    }
+
+    setDirectSgpaInputs((prev) => ({
+      ...prev,
+      [semVal]: ""
+    }));
   };
 
   // Clear all saved data
-  const resetAllGpas = () => {
+  const resetAllGpas = async () => {
     setSavedGpas({});
-    localStorage.removeItem("aktu_hub_gpas");
     setDirectSgpaInputs({
       1: "", 2: "", 3: "", 4: "", 5: "", 6: "", 7: "", 8: ""
     });
     setCurrentSgpa(null);
+
+    if (user) {
+      try {
+        const { error } = await supabase
+          .from("gpa_records")
+          .delete()
+          .eq("user_id", user.id);
+        if (error) throw error;
+      } catch (err) {
+        console.error("Error clearing GPAs from database:", err.message);
+      }
+    } else {
+      localStorage.removeItem("aktu_hub_gpas");
+    }
   };
 
   // Calculate Cumulative CGPA (credit-weighted average)
@@ -176,6 +309,18 @@ function CGPAPage() {
         <ChevronRight size={14} />
         <span className="text-primary-text font-medium">CGPA Calculator</span>
       </div>
+
+      {/* Offline Mode Banner */}
+      {!user && (
+        <div className="mb-6 p-4 bg-blue-50 border border-blue-100 rounded-custom-lg flex justify-between items-center text-xs text-blue-800">
+          <div className="flex gap-2.5 items-center">
+            <Info size={16} className="flex-shrink-0" />
+            <p>
+              You are currently using <strong>Offline Mode</strong>. Your calculated GPAs are saved locally in this browser. <Link to="/auth" className="underline font-semibold hover:text-blue-950">Sign In</Link> to back them up to your cloud profile!
+            </p>
+          </div>
+        </div>
+      )}
 
       <div className="border-b border-border-light pb-6 mb-10">
         <h1 className="text-4xl font-bold tracking-tight text-primary-text mb-2">
@@ -368,7 +513,7 @@ function CGPAPage() {
               {Object.keys(savedGpas).length > 0 && (
                 <button
                   onClick={resetAllGpas}
-                  className="text-[11px] text-secondary-text hover:text-error flex items-center gap-0.5 cursor-pointer"
+                  className="text-[11px] text-secondary-text hover:text-error flex items-center gap-0.5 cursor-pointer bg-transparent border-0"
                 >
                   <Trash2 size={12} />
                   <span>Reset Logs</span>
@@ -378,7 +523,7 @@ function CGPAPage() {
 
             {Object.keys(savedGpas).length === 0 ? (
               <div className="text-center py-6 text-xs text-secondary-text">
-                No semesters logged yet. Save an SGPA calculation to display here.
+                {loadingDb ? "Loading database logs..." : "No semesters logged yet. Save an SGPA calculation to display here."}
               </div>
             ) : (
               <div className="space-y-2">
@@ -397,7 +542,7 @@ function CGPAPage() {
                         <span className="font-bold text-primary-text">{record.sgpa.toFixed(2)}</span>
                         <button
                           onClick={() => deleteSemesterGpa(s)}
-                          className="text-secondary-text hover:text-error transition-all-fast cursor-pointer"
+                          className="text-secondary-text hover:text-error transition-all-fast cursor-pointer bg-transparent border-0"
                         >
                           <Trash2 size={12} />
                         </button>

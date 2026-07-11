@@ -1,11 +1,17 @@
 import { useParams, Link } from "react-router-dom";
+import { useState, useEffect } from "react";
 import { ChevronRight, BookOpen, AlertCircle } from "lucide-react";
 import SemesterData from "../Data/SemesterData";
 import resources from "../Data/resources";
+import { supabase } from "../supabaseClient";
 
 function Semester() {
   const { id } = useParams();
   const semesterNumber = Number(id);
+
+  const [subjects, setSubjects] = useState([]);
+  const [dbResources, setDbResources] = useState({});
+  const [loading, setLoading] = useState(true);
 
   if (isNaN(semesterNumber) || semesterNumber < 1 || semesterNumber > 8) {
     return (
@@ -20,7 +26,63 @@ function Semester() {
     );
   }
 
-  const subjects = SemesterData[id] || [];
+  // Load subjects and resources
+  useEffect(() => {
+    const loadSubjectsAndResources = async () => {
+      setLoading(true);
+      try {
+        // 1. Fetch subjects from Supabase
+        const { data: dbSubjects, error: subError } = await supabase
+          .from("subjects")
+          .select("*")
+          .eq("semester", semesterNumber);
+
+        if (subError) throw subError;
+
+        let loadedSubjects = [];
+        if (dbSubjects && dbSubjects.length > 0) {
+          loadedSubjects = dbSubjects.map(sub => sub.subject_name);
+          setSubjects(loadedSubjects);
+        } else {
+          // Fallback to static local data
+          loadedSubjects = SemesterData[semesterNumber] || [];
+          setSubjects(loadedSubjects);
+        }
+
+        // 2. Fetch resource counts
+        const { data: dbRes, error: resError } = await supabase
+          .from("resources")
+          .select("*, subjects!inner(*)")
+          .eq("subjects.semester", semesterNumber);
+
+        if (resError) throw resError;
+
+        if (dbRes && dbRes.length > 0) {
+          // Format counts by subject name slug
+          const counts = {};
+          dbRes.forEach(row => {
+            const subjectName = row.subjects.subject_name;
+            const slug = subjectName.toLowerCase().replaceAll(" ", "-").replace(/[^a-z0-9-]/g, "");
+            const rawSlug = subjectName.toLowerCase().replaceAll(" ", "-");
+            
+            if (!counts[slug]) counts[slug] = 0;
+            if (!counts[rawSlug]) counts[rawSlug] = 0;
+            
+            counts[slug]++;
+            counts[rawSlug]++;
+          });
+          setDbResources(counts);
+        }
+      } catch (err) {
+        console.warn("Supabase fetch failed, falling back to local files:", err.message);
+        setSubjects(SemesterData[semesterNumber] || []);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadSubjectsAndResources();
+  }, [id, semesterNumber]);
 
   return (
     <div className="max-w-6xl mx-auto px-6 py-12 w-full flex-grow">
@@ -40,7 +102,11 @@ function Semester() {
         </p>
       </div>
 
-      {subjects.length === 0 ? (
+      {loading ? (
+        <div className="text-center py-16 text-secondary-text text-sm">
+          Loading curriculum database...
+        </div>
+      ) : subjects.length === 0 ? (
         <div className="text-center py-16 bg-bg-secondary border border-border-light rounded-custom-xl">
           <span className="text-4xl">📂</span>
           <h3 className="text-lg font-semibold text-primary-text mt-4">No subjects listed</h3>
@@ -51,10 +117,15 @@ function Semester() {
           {subjects.map((subject) => {
             const rawSlug = subject.toLowerCase().replaceAll(" ", "-");
             const cleanSlug = rawSlug.replace(/[^a-z0-9-]/g, "");
-            const subjectResources = resources[cleanSlug] || resources[rawSlug];
-            let resourceCount = 0;
-            if (subjectResources) {
-              resourceCount = Object.values(subjectResources).filter(val => val && val.trim() !== "").length;
+            
+            // Check dynamic db resources count, if empty fallback to local resources.js
+            let resourceCount = dbResources[cleanSlug] || dbResources[rawSlug] || 0;
+            
+            if (resourceCount === 0) {
+              const subjectResources = resources[cleanSlug] || resources[rawSlug];
+              if (subjectResources) {
+                resourceCount = Object.values(subjectResources).filter(val => val && val.trim() !== "").length;
+              }
             }
 
             return (
