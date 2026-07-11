@@ -37,12 +37,23 @@ function DashboardPage() {
     } else if (!user) {
       // Local offline fallback
       const saved = localStorage.getItem("aktu_hub_profile");
-      const parsed = saved ? JSON.parse(saved) : { name: "Guest Student", branch: "CSE", currentSem: "1", email: "guest@domain.com" };
+      let parsed = saved ? JSON.parse(saved) : null;
+      
+      // Auto-detect and wipe old hardcoded placeholders from previous Phase 1 sessions
+      if (parsed && (parsed.name === "Adarsh Shukla" || parsed.email === "student@aktu.ac.in")) {
+        localStorage.removeItem("aktu_hub_profile");
+        parsed = null;
+      }
+      
+      if (!parsed) {
+        parsed = { name: "Guest Student", branch: "CSE", currentSem: "1", email: "guest@domain.com" };
+      }
+      
       setLocalProfile(parsed);
       setEditedProfile({
         name: parsed.name,
         branch: parsed.branch,
-        currentSem: String(parsed.currentSem),
+        currentSem: String(parsed.currentSem || 1),
         email: parsed.email
       });
     }
@@ -113,6 +124,9 @@ function DashboardPage() {
   const handleSignOut = async () => {
     try {
       await signOut();
+      // Clear offline cache details upon logout to prevent trace leakage
+      localStorage.removeItem("aktu_hub_profile");
+      localStorage.removeItem("aktu_hub_gpas");
       navigate("/");
     } catch (err) {
       console.error("Error signing out:", err.message);
