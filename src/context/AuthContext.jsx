@@ -70,24 +70,34 @@ export function AuthProvider({ children }) {
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
+      options: {
+        data: {
+          full_name: fullName
+        }
+      }
     });
     
     if (error) throw error;
     
-    // Create profile
+    // Upsert profile (overwriting any race-condition blank row inserted by the listener)
     if (data?.user) {
-      const { error: profileError } = await supabase
+      const { data: newProfile, error: profileError } = await supabase
         .from("profiles")
-        .insert([
-          {
-            id: data.user.id,
-            email,
-            full_name: fullName,
-            branch_id: "CSE",
-            current_semester: 1,
-          },
-        ]);
-      if (profileError) console.error("Error inserting profile:", profileError.message);
+        .upsert({
+          id: data.user.id,
+          email,
+          full_name: fullName,
+          branch_id: "CSE",
+          current_semester: 1,
+        })
+        .select()
+        .single();
+      
+      if (profileError) {
+        console.error("Error upserting profile:", profileError.message);
+      } else if (newProfile) {
+        setProfile(newProfile);
+      }
     }
     return data;
   };
