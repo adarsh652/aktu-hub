@@ -152,3 +152,8 @@
   stop-color: var(--color-primary-text) !important;
   stop-opacity: 0.00 !important;
 }
+
+/* Invert black logo text to white in dark mode */
+.dark img[src="/logo.png"] {
+  filter: invert(1) brightness(1.5);
+}
