@@ -4,7 +4,7 @@ const resources = {
   "engineering-physics": {
     notes: "https://drive.google.com/drive/folders/1tGPFHlxEThuBICkpIciBn_CgHKZtZo74?usp=sharing",
     pyqs: "https://drive.google.com/drive/folders/12PltJmVJDePxvjnbUvzXBwdwg6RCJznA?usp=sharing",
-    syllabus: "https://drive.google.com/file/d/1UzNUQMuMkiSkSUAjZIO7Eqiked-KyRqX/view?usp=drive_link"
+    syllabus: "https://drive.google.com/file/d/1nserm2eHXrlqzh_ApObr109zL6aN_uhq/view?usp=drive_link"
   },
   "engineering-mathematics-i": {
     notes: "https://drive.google.com/drive/folders/1tGPFHlxEThuBICkpIciBn_CgHKZtZo74?usp=drive_link",
@@ -12,9 +12,13 @@ const resources = {
     syllabus: "https://drive.google.com/file/d/1UzNUQMuMkiSkSUAjZIO7Eqiked-KyRqX/view?usp=drive_link"
   },
   "fundamentals-of-electronics-engineering": {
+    notes: "https://drive.google.com/drive/folders/1PmP5ZJWpL6JxvXMD5Pc5E_x3NYchWVur?usp=drive_link",
+    pyqs: "https://drive.google.com/drive/folders/1wfvEOG9lbeKycm_Ye0hlIjX9y68bmikI?usp=drive_link",
     syllabus: "https://drive.google.com/file/d/1UzNUQMuMkiSkSUAjZIO7Eqiked-KyRqX/view?usp=drive_link"
   },
   "fundamentals-of-mechanical-engineering": {
+    notes: "https://drive.google.com/drive/folders/1qbkC1rERWzz8_JSEVRe81rfJfcvMbNa_?usp=drive_link",
+    pyqs: "https://drive.google.com/drive/folders/1WZ5OeICjlOoxSkiCVecjzJ625C8jnoFw?usp=drive_link",
     syllabus: "https://drive.google.com/file/d/1UzNUQMuMkiSkSUAjZIO7Eqiked-KyRqX/view?usp=drive_link"
   },
   "soft-skills": {
