@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, BookOpen, Calculator, Info, LayoutDashboard } from "lucide-react";
+import { Menu, X, BookOpen, Calculator, LayoutDashboard, Sun, Moon } from "lucide-react";
+import { useTheme } from "../context/ThemeContext";
 
 function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
+  const { theme, toggleTheme } = useTheme();
 
   const navLinks = [
     { name: "Resources", path: "/", icon: BookOpen },
@@ -38,14 +40,26 @@ function Navbar() {
           })}
         </nav>
 
-        {/* Mobile Hamburger Toggle */}
-        <button
-          onClick={() => setIsOpen(!isOpen)}
-          className="p-2 -mr-2 md:hidden text-primary-text hover:bg-bg-secondary rounded-lg transition-all-fast"
-          aria-label="Toggle Menu"
-        >
-          {isOpen ? <X size={20} /> : <Menu size={20} />}
-        </button>
+        {/* Right side items (Theme toggle + Menu button) */}
+        <div className="flex items-center gap-2">
+          {/* Theme Toggle Button */}
+          <button
+            onClick={toggleTheme}
+            className="p-2 rounded-lg hover:bg-bg-secondary text-secondary-text hover:text-primary-text transition-all-fast cursor-pointer border-0 bg-transparent"
+            aria-label="Toggle theme"
+          >
+            {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
+          </button>
+
+          {/* Mobile Hamburger Toggle */}
+          <button
+            onClick={() => setIsOpen(!isOpen)}
+            className="p-2 -mr-2 md:hidden text-primary-text hover:bg-bg-secondary rounded-lg transition-all-fast border-0 bg-transparent"
+            aria-label="Toggle Menu"
+          >
+            {isOpen ? <X size={20} /> : <Menu size={20} />}
+          </button>
+        </div>
       </div>
 
       {/* Mobile Drawer (Collapsible Menu) */}
