@@ -29,7 +29,20 @@ export function AuthProvider({ children }) {
             .select()
             .single();
           if (createError) console.error("Error creating default profile:", createError.message);
-          if (newProfile) setProfile(newProfile);
+          if (newProfile) {
+            setProfile(newProfile);
+            // Trigger welcome email serverless function for new users
+            fetch("/api/send-welcome", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                email: userEmail,
+                fullName: oauthName,
+              }),
+            }).catch((err) => console.error("Failed to trigger welcome email:", err));
+          }
         } else {
           console.error("Error fetching profile:", error.message);
         }
