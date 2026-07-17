@@ -9,32 +9,36 @@ function Hero() {
   };
 
   return (
-    <section className="text-center py-16 md:py-24 max-w-4xl mx-auto px-6 flex flex-col items-center">
-      <h1 className="text-5xl md:text-6xl font-bold tracking-tight text-primary-text mb-4">
-        Welcome to <span className="font-extrabold text-btn-dark">AKTU Hub</span>
-      </h1>
-      
-      <p className="text-lg md:text-xl text-secondary-text max-w-2xl leading-relaxed mb-8">
-        Everything an AKTU student needs — Notes, PYQs, Syllabus, Results and More.
-      </p>
-      
-      <div className="flex flex-wrap justify-center gap-4 mb-10">
-        <button
-          onClick={() => scrollToSection("resources")}
-          className="px-6 py-3 bg-btn-dark text-white font-medium rounded-custom-lg hover:bg-neutral-800 transition-all-fast shadow-sm hover:shadow-md cursor-pointer"
-        >
-          Explore Resources
-        </button>
-        <button
-          onClick={() => scrollToSection("semesters")}
-          className="px-6 py-3 bg-white text-secondary-text font-medium border border-border-light rounded-custom-lg hover:text-primary-text hover:bg-bg-secondary transition-all-fast shadow-sm hover:shadow-md cursor-pointer"
-        >
-          Browse Semesters
-        </button>
-      </div>
+    <section className="hero-gradient pt-24 pb-20 overflow-hidden w-full border-b border-border-light transition-colors duration-300">
+      <div className="max-w-4xl mx-auto px-6 text-center flex flex-col items-center">
+        <div className="space-y-4">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight text-primary-text">
+            Welcome to <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-700 to-teal-500 dark:from-blue-400 dark:to-teal-300">AKTU Hub</span>
+          </h1>
+          <p className="text-lg md:text-xl text-secondary-text max-w-2xl mx-auto leading-relaxed">
+            Everything an AKTU student needs — Notes, PYQs, Syllabus, Results and More.
+          </p>
+        </div>
 
-      <div className="w-full max-w-xl">
-        <SearchBar />
+        <div className="flex flex-wrap justify-center gap-4 mt-8">
+          <button
+            onClick={() => scrollToSection("resources")}
+            className="bg-btn-dark text-white px-8 py-3 rounded-custom-xl font-semibold text-sm shadow-md hover:-translate-y-0.5 hover:shadow-lg active:scale-95 transition-all cursor-pointer border-0"
+          >
+            Explore Resources
+          </button>
+          <button
+            onClick={() => scrollToSection("semesters")}
+            className="bg-white dark:bg-slate-800 border border-border-light text-primary-text px-8 py-3 rounded-custom-xl font-semibold text-sm hover:bg-bg-secondary active:scale-95 transition-all cursor-pointer"
+          >
+            Browse Semesters
+          </button>
+        </div>
+
+        {/* Global Search Bar */}
+        <div className="w-full max-w-xl mt-12">
+          <SearchBar />
+        </div>
       </div>
     </section>
   );

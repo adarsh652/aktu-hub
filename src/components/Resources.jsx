@@ -1,14 +1,7 @@
 import { Link } from "react-router-dom";
-import { BookOpen, FileText, FileSpreadsheet, Calculator } from "lucide-react";
+import { BookOpen, FileText, FileSpreadsheet, Calculator as CalcIcon } from "lucide-react";
 
 function Resources() {
-  const resources = [
-    { name: "Notes", desc: "Handwritten & lecture notes", icon: BookOpen, action: () => scrollToSection("semesters") },
-    { name: "PYQs", desc: "Previous year question papers", icon: FileText, action: () => scrollToSection("semesters") },
-    { name: "Syllabus", desc: "Official university syllabus", icon: FileSpreadsheet, action: () => scrollToSection("semesters") },
-    { name: "CGPA Calculator", desc: "Calculate your SGPA and CGPA", icon: Calculator, link: "/cgpa" }
-  ];
-
   const scrollToSection = (id) => {
     const element = document.getElementById(id);
     if (element) {
@@ -17,45 +10,78 @@ function Resources() {
   };
 
   return (
-    <section id="resources" className="max-w-6xl mx-auto px-6 py-12 scroll-mt-20">
-      <h2 className="text-3xl font-bold tracking-tight text-primary-text mb-2">
-        Academic Resources
-      </h2>
-      <p className="text-secondary-text mb-8 text-sm md:text-base">
-        Select a resource type below or browse by semester.
-      </p>
+    <section id="resources" className="max-w-6xl mx-auto px-6 py-16 scroll-mt-20">
+      <div className="mb-10">
+        <h2 className="text-3xl font-extrabold tracking-tight text-primary-text mb-2">
+          Academic Resources
+        </h2>
+        <p className="text-secondary-text text-sm md:text-base">
+          Discover hand-curated materials, exam papers, and GPA tools.
+        </p>
+      </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {resources.map((res) => {
-          const Icon = res.icon;
-          const CardContent = (
-            <div className="flex flex-col items-start p-6 text-left h-full">
-              <div className="p-3 bg-bg-secondary rounded-custom-lg border border-border-light text-primary-text mb-4 transition-all-fast group-hover:bg-btn-dark group-hover:text-white">
-                <Icon size={24} strokeWidth={1.5} />
-              </div>
-              <h3 className="text-lg font-semibold text-primary-text mb-1">{res.name}</h3>
-              <p className="text-sm text-secondary-text leading-snug">{res.desc}</p>
-            </div>
-          );
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        {/* Notes (Large Bento) */}
+        <button
+          onClick={() => scrollToSection("semesters")}
+          className="md:col-span-2 md:row-span-2 bento-card glass-panel rounded-custom-xl p-8 flex flex-col justify-end text-left group cursor-pointer focus:outline-none focus:ring-2 focus:ring-btn-dark border border-border-light bg-white/45 dark:bg-slate-900/40 min-h-[280px] md:min-h-[400px]"
+        >
+          <div className="w-14 h-14 bg-blue-700 dark:bg-blue-600 rounded-custom-lg flex items-center justify-center text-white mb-6 shadow-md transition-all-fast group-hover:scale-105">
+            <BookOpen size={28} strokeWidth={1.5} />
+          </div>
+          <h3 className="text-2xl font-bold text-primary-text mb-3">Notes</h3>
+          <p className="text-secondary-text text-sm md:text-base leading-relaxed">
+            Access high-quality handwritten and standard lecture notes curated specifically for your university curriculum.
+          </p>
+        </button>
 
-          return res.link ? (
-            <Link
-              key={res.name}
-              to={res.link}
-              className="card-premium group cursor-pointer block h-full focus:outline-none focus:ring-2 focus:ring-btn-dark focus:ring-offset-2"
-            >
-              {CardContent}
-            </Link>
-          ) : (
-            <button
-              key={res.name}
-              onClick={res.action}
-              className="card-premium group cursor-pointer block text-left w-full h-full focus:outline-none focus:ring-2 focus:ring-btn-dark focus:ring-offset-2"
-            >
-              {CardContent}
-            </button>
-          );
-        })}
+        {/* PYQs (Tall/Medium) */}
+        <button
+          onClick={() => scrollToSection("semesters")}
+          className="md:col-span-2 md:row-span-1 bento-card glass-panel rounded-custom-xl p-8 flex items-center gap-6 text-left group cursor-pointer focus:outline-none focus:ring-2 focus:ring-btn-dark border border-border-light bg-white/45 dark:bg-slate-900/40"
+        >
+          <div className="w-12 h-12 bg-teal-600 dark:bg-teal-500 rounded-custom-lg flex items-center justify-center text-white shrink-0 shadow-sm transition-all-fast group-hover:scale-105">
+            <FileText size={22} strokeWidth={1.5} />
+          </div>
+          <div>
+            <h3 className="text-xl font-bold text-primary-text mb-1">Previous Year Papers</h3>
+            <p className="text-secondary-text text-xs md:text-sm">
+              Organized by year and subject for efficient semester exam preparation.
+            </p>
+          </div>
+        </button>
+
+        {/* Syllabus */}
+        <button
+          onClick={() => scrollToSection("semesters")}
+          className="md:col-span-1 md:row-span-1 bento-card glass-panel rounded-custom-xl p-8 flex flex-col justify-between text-left group cursor-pointer focus:outline-none focus:ring-2 focus:ring-btn-dark border border-border-light bg-white/45 dark:bg-slate-900/40 min-h-[180px]"
+        >
+          <div className="w-10 h-10 bg-bg-secondary rounded-custom-lg flex items-center justify-center text-primary-text mb-4 border border-border-light transition-all-fast group-hover:bg-btn-dark group-hover:text-white">
+            <FileSpreadsheet size={18} strokeWidth={1.5} />
+          </div>
+          <div>
+            <h3 className="text-lg font-bold text-primary-text mb-1">Syllabus</h3>
+            <p className="text-secondary-text text-xs leading-snug">
+              Latest session engineering curriculum guides.
+            </p>
+          </div>
+        </button>
+
+        {/* Calculator */}
+        <Link
+          to="/cgpa"
+          className="md:col-span-1 md:row-span-1 bento-card glass-panel rounded-custom-xl p-8 flex flex-col justify-between text-left group cursor-pointer focus:outline-none focus:ring-2 focus:ring-btn-dark border border-border-light bg-white/45 dark:bg-slate-900/40 min-h-[180px]"
+        >
+          <div className="w-10 h-10 bg-bg-secondary rounded-custom-lg flex items-center justify-center text-primary-text mb-4 border border-border-light transition-all-fast group-hover:bg-btn-dark group-hover:text-white">
+            <CalcIcon size={18} strokeWidth={1.5} />
+          </div>
+          <div>
+            <h3 className="text-lg font-bold text-primary-text mb-1">Calculator</h3>
+            <p className="text-secondary-text text-xs leading-snug">
+              Accurate SGPA/CGPA calculations with credit weights.
+            </p>
+          </div>
+        </Link>
       </div>
     </section>
   );

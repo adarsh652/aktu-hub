@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+
+<html class="scroll-smooth" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AKTU Hub | Centralized Academic Excellence</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+        }
+        .dark .glass-panel {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .hero-gradient {
+            background: radial-gradient(circle at top right, #e7eeff 0%, #f9f9ff 100%);
+        }
+        .dark .hero-gradient {
+            background: radial-gradient(circle at top right, #1e293b 0%, #0f172a 100%);
+        }
+        .bento-card {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        .bento-card::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 50%);
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+        .dark .bento-card::after {
+            background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0) 50%);
+        }
+        .bento-card:hover::after {
+            opacity: 1;
+        }
+        .bento-card:hover {
+            transform: translateY(-4px) scale(1.01);
+            box-shadow: 0 20px 40px -12px rgba(0, 32, 69, 0.12);
+        }
+        @keyframes slideUpFade {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-hero {
+            animation: slideUpFade 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+        }
+        .animation-delay-200 { animation-delay: 0.2s; }
+        .animation-delay-400 { animation-delay: 0.4s; }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "error": "#ba1a1a",
+                      "error-container": "#ffdad6",
+                      "on-tertiary": "#ffffff",
+                      "on-secondary-container": "#006f6a",
+                      "on-error-container": "#93000a",
+                      "surface-bright": "#f9f9ff",
+                      "surface-container-high": "#dee8ff",
+                      "primary": "#002045",
+                      "surface-dim": "#cfdaf1",
+                      "on-surface-variant": "#43474e",
+                      "inverse-surface": "#263142",
+                      "on-tertiary-fixed-variant": "#004881",
+                      "surface": "#f9f9ff",
+                      "outline-variant": "#c4c6cf",
+                      "surface-container": "#e7eeff",
+                      "secondary-fixed": "#84f5ee",
+                      "tertiary-container": "#003765",
+                      "secondary": "#006a66",
+                      "on-surface": "#111c2c",
+                      "primary-fixed-dim": "#adc7f7",
+                      "primary-container": "#1a365d",
+                      "on-primary": "#ffffff",
+                      "on-primary-container": "#86a0cd",
+                      "secondary-container": "#81f2eb",
+                      "tertiary-fixed": "#d3e4ff",
+                      "primary-fixed": "#d6e3ff",
+                      "tertiary-fixed-dim": "#a2c9ff",
+                      "surface-variant": "#d8e3fa",
+                      "on-error": "#ffffff",
+                      "on-secondary-fixed-variant": "#00504d",
+                      "surface-container-lowest": "#ffffff",
+                      "tertiary": "#002141",
+                      "surface-tint": "#455f88",
+                      "on-background": "#111c2c",
+                      "on-secondary": "#ffffff",
+                      "on-primary-fixed-variant": "#2d476f",
+                      "on-tertiary-fixed": "#001c38",
+                      "on-secondary-fixed": "#00201e",
+                      "surface-container-low": "#f0f3ff",
+                      "on-primary-fixed": "#001b3c",
+                      "secondary-fixed-dim": "#66d8d2",
+                      "inverse-primary": "#adc7f7",
+                      "on-tertiary-container": "#68a2e9",
+                      "surface-container-highest": "#d8e3fa",
+                      "outline": "#74777f",
+                      "inverse-on-surface": "#ebf1ff",
+                      "background": "#f9f9ff"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.5rem",
+                      "lg": "0.5rem",
+                      "xl": "1rem",
+                      "2xl": "1.5rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "stack-sm": "8px",
+                      "stack-md": "16px",
+                      "margin-desktop": "40px",
+                      "margin-mobile": "16px",
+                      "container-max": "1280px",
+                      "gutter": "24px",
+                      "unit": "4px",
+                      "stack-lg": "32px"
+              },
+              "fontFamily": {
+                      "body": ["Public Sans", "sans-serif"],
+                      "headline": ["Public Sans", "sans-serif"]
+              },
+              "fontSize": {
+                      "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+                      "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                      "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                      "headline-lg-mobile": ["28px", {"lineHeight": "36px", "fontWeight": "700"}],
+                      "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600"}],
+                      "headline-xl": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                      "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                      "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700"}]
+              }
+            },
+          },
+        }
+    </script>
+</head>
+<body class="bg-background text-on-background font-body selection:bg-secondary-container selection:text-on-secondary-container transition-colors duration-300 dark:bg-[#0f172a] dark:text-slate-200">
+<!-- Floating Capsule Navbar -->
+<header class="fixed top-6 left-0 right-0 z-50 px-4">
+<nav class="max-w-5xl mx-auto glass-panel rounded-full h-16 flex items-center justify-between px-8 border border-white/20 shadow-lg dark:border-slate-800">
+<div class="flex items-center gap-12">
+<a class="font-headline text-xl font-bold text-primary tracking-tight dark:text-white" href="#">AKTU Hub</a>
+<div class="hidden md:flex items-center gap-8">
+<a class="font-label-md text-on-surface-variant hover:text-primary transition-colors dark:text-slate-400 dark:hover:text-white" href="#resources">Resources</a>
+<a class="font-label-md text-on-surface-variant hover:text-primary transition-colors dark:text-slate-400 dark:hover:text-white" href="/cgpa">CGPA</a>
+<a class="font-label-md text-on-surface-variant hover:text-primary transition-colors dark:text-slate-400 dark:hover:text-white" href="/dashboard">Dashboard</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button aria-label="Toggle Theme" class="p-2.5 text-on-surface-variant hover:bg-surface-container rounded-full transition-all active:scale-90 dark:text-slate-400 dark:hover:bg-slate-800" onclick="document.documentElement.classList.toggle('dark')">
+<i class="w-5 h-5" data-lucide="sun-moon"></i>
+</button>
+<button class="bg-primary text-on-primary px-6 py-2.5 rounded-full font-label-md hover:shadow-lg active:scale-95 transition-all dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-white">Sign In</button>
+</div>
+</nav>
+</header>
+<main>
+<!-- Hero Section -->
+<section class="hero-gradient pt-48 pb-32 overflow-hidden">
+<div class="max-w-4xl mx-auto px-margin-desktop text-center">
+<div class="space-y-6 opacity-0 animate-hero">
+<h1 class="font-headline text-headline-xl text-on-surface tracking-tighter dark:text-white">
+                    Welcome to <span class="bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary dark:from-blue-400 dark:to-teal-300">AKTU Hub</span>
+</h1>
+<p class="text-body-lg text-on-surface-variant max-w-2xl mx-auto opacity-0 animate-hero animation-delay-200 dark:text-slate-400">
+                    Everything an AKTU student needs — Notes, PYQs, Syllabus, Results and More.
+                </p>
+</div>
+<div class="flex flex-wrap justify-center gap-6 mt-12 opacity-0 animate-hero animation-delay-400">
+<a class="bg-primary text-on-primary px-10 py-4 rounded-xl font-label-md shadow-xl hover:-translate-y-1 active:scale-95 transition-all dark:bg-blue-600 dark:hover:bg-blue-500" href="#resources">Explore Resources</a>
+<a class="bg-white/50 backdrop-blur-md border border-outline-variant text-primary px-10 py-4 rounded-xl font-label-md hover:bg-white active:scale-95 transition-all dark:bg-slate-800/50 dark:border-slate-700 dark:text-white dark:hover:bg-slate-800" href="#semesters">Browse Semesters</a>
+</div>
+<!-- Global Search Bar with CMD+K -->
+<div class="relative max-w-2xl mx-auto pt-16 opacity-0 animate-hero animation-delay-400">
+<div class="relative group">
+<div class="absolute inset-y-0 left-5 flex items-center pointer-events-none">
+<i class="w-5 h-5 text-outline dark:text-slate-500" data-lucide="search"></i>
+</div>
+<input class="w-full pl-14 pr-24 py-5 bg-white border border-outline-variant rounded-2xl focus:border-primary focus:ring-4 focus:ring-primary/10 shadow-xl transition-all text-body-md dark:bg-slate-900/50 dark:border-slate-700 dark:text-white dark:focus:border-blue-500 dark:focus:ring-blue-500/10" id="global-search" placeholder="Search notes, subjects, PYQs..." type="text"/>
+<div class="absolute inset-y-0 right-5 flex items-center gap-2">
+<kbd class="hidden sm:inline-flex h-6 items-center gap-1 rounded border border-outline-variant bg-surface-container-low px-1.5 font-mono text-[10px] font-medium text-on-surface-variant opacity-100 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-400">
+<span class="text-xs">⌘</span>K
+                        </kbd>
+<button class="text-outline hover:text-error transition-colors dark:text-slate-500 dark:hover:text-red-400" onclick="document.getElementById('global-search').value = ''">
+<i class="w-5 h-5" data-lucide="x"></i>
+</button>
+</div>
+</div>
+<!-- Search Results Dropdown -->
+<div class="hidden absolute top-[calc(100%+12px)] left-0 right-0 glass-panel rounded-2xl shadow-2xl border border-outline-variant overflow-hidden z-30 dark:border-slate-700" id="search-results">
+<div class="p-3 border-b border-outline-variant bg-surface-container-low/50 text-label-sm text-on-surface-variant font-semibold px-6 uppercase tracking-wider dark:bg-slate-800/80 dark:border-slate-700 dark:text-slate-400">Quick Results</div>
+<div class="max-h-72 overflow-y-auto">
+<a class="flex items-center gap-4 p-5 hover:bg-primary/5 transition-colors border-b border-outline-variant/50 last:border-0 group dark:hover:bg-white/5 dark:border-white/5" href="#">
+<div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center group-hover:bg-primary-fixed dark:bg-slate-800 dark:group-hover:bg-slate-700">
+<i class="w-5 h-5 text-primary dark:text-blue-400" data-lucide="book"></i>
+</div>
+<div>
+<div class="font-label-md text-primary dark:text-white">KAS-101 Engineering Physics</div>
+<div class="text-label-sm text-on-surface-variant dark:text-slate-400">Semester 1 • Notes &amp; PYQs</div>
+</div>
+</a>
+<a class="flex items-center gap-4 p-5 hover:bg-primary/5 transition-colors border-b border-outline-variant/50 last:border-0 group dark:hover:bg-white/5 dark:border-white/5" href="#">
+<div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center group-hover:bg-primary-fixed dark:bg-slate-800 dark:group-hover:bg-slate-700">
+<i class="w-5 h-5 text-primary dark:text-blue-400" data-lucide="code"></i>
+</div>
+<div>
+<div class="font-label-md text-primary dark:text-white">KCS-301 Data Structures</div>
+<div class="text-label-sm text-on-surface-variant dark:text-slate-400">Semester 3 • Syllabus</div>
+</div>
+</a>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Academic Resources Bento Grid -->
+<section class="py-24 -mt-20 relative z-10" id="resources">
+<div class="max-w-container-max mx-auto px-margin-desktop">
+<div class="grid grid-cols-1 md:grid-cols-6 grid-rows-2 gap-gutter h-auto lg:h-[500px]">
+<!-- Notes (Large Bento) -->
+<div class="md:col-span-3 md:row-span-2 bento-card glass-panel rounded-3xl p-10 flex flex-col justify-end group cursor-pointer bg-white/40 dark:bg-slate-900/40 border border-white/20 dark:border-slate-800">
+<div class="w-16 h-16 bg-primary rounded-2xl flex items-center justify-center mb-8 text-white shadow-lg shadow-primary/20 dark:bg-blue-600 dark:shadow-blue-900/40">
+<i class="w-8 h-8" data-lucide="book-open"></i>
+</div>
+<h3 class="font-headline text-3xl text-primary mb-4 dark:text-white">Notes</h3>
+<p class="text-on-surface-variant text-lg leading-relaxed max-w-sm dark:text-slate-400">Access high-quality handwritten and standard notes curated specifically for your curriculum.</p>
+</div>
+<!-- PYQs (Tall/Medium) -->
+<div class="md:col-span-3 md:row-span-1 bento-card glass-panel rounded-3xl p-8 flex items-center gap-8 cursor-pointer bg-white/40 dark:bg-slate-900/40 border border-white/20 dark:border-slate-800">
+<div class="w-14 h-14 bg-secondary rounded-xl flex items-center justify-center text-white shrink-0 dark:bg-teal-600">
+<i class="w-6 h-6" data-lucide="file-text"></i>
+</div>
+<div>
+<h3 class="font-headline text-2xl text-primary mb-2 dark:text-white">Previous Year Papers</h3>
+<p class="text-on-surface-variant text-sm dark:text-slate-400">Organized by year and subject for efficient exam preparation.</p>
+</div>
+</div>
+<!-- Syllabus & Calculator (Small Bento items) -->
+<div class="md:col-span-1.5 md:row-span-1 bento-card glass-panel rounded-3xl p-8 flex flex-col cursor-pointer bg-white/40 dark:bg-slate-900/40 border border-white/20 dark:border-slate-800">
+<div class="w-12 h-12 bg-surface-container-highest rounded-xl flex items-center justify-center mb-4 text-primary dark:bg-slate-800 dark:text-blue-400">
+<i class="w-5 h-5" data-lucide="file-spreadsheet"></i>
+</div>
+<h3 class="font-headline text-xl text-primary mb-1 dark:text-white">Syllabus</h3>
+<p class="text-on-surface-variant text-xs dark:text-slate-400">Latest session curriculum guides.</p>
+</div>
+<div class="md:col-span-1.5 md:row-span-1 bento-card glass-panel rounded-3xl p-8 flex flex-col cursor-pointer bg-white/40 dark:bg-slate-900/40 border border-white/20 dark:border-slate-800">
+<div class="w-12 h-12 bg-surface-container-highest rounded-xl flex items-center justify-center mb-4 text-primary dark:bg-slate-800 dark:text-blue-400">
+<i class="w-5 h-5" data-lucide="calculator"></i>
+</div>
+<h3 class="font-headline text-xl text-primary mb-1 dark:text-white">Calculator</h3>
+<p class="text-on-surface-variant text-xs dark:text-slate-400">Accurate SGPA/CGPA calculations.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Browse by Semester Grid -->
+<section class="py-32 bg-surface-container-low/30 relative dark:bg-[#0f172a]" id="semesters">
+<div class="max-w-container-max mx-auto px-margin-desktop">
+<div class="mb-16 flex flex-col md:flex-row md:items-end justify-between gap-6">
+<div class="max-w-xl">
+<h2 class="font-headline text-headline-lg text-primary mb-4 dark:text-white">Browse by Semester</h2>
+<p class="text-on-surface-variant text-lg dark:text-slate-400">Select your semester to discover a tailored repository of study materials, reference books, and academic tools.</p>
+</div>
+<div class="flex gap-2">
+<button class="p-3 border border-outline-variant rounded-full hover:bg-white transition-colors dark:border-slate-700 dark:text-slate-400 dark:hover:bg-slate-800"><i class="w-5 h-5" data-lucide="arrow-left"></i></button>
+<button class="p-3 border border-outline-variant rounded-full hover:bg-white transition-colors dark:border-slate-700 dark:text-slate-400 dark:hover:bg-slate-800"><i class="w-5 h-5" data-lucide="arrow-right"></i></button>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+<script>
+                    const semesterDetails = [
+                        "Foundational science and mathematics core",
+                        "Applied sciences and specialized lab work",
+                        "Core departmental engineering subjects",
+                        "Advanced technical concepts and theories",
+                        "Advanced departmental core modules",
+                        "Electives and project initialization phase",
+                        "Specialized electives and major projects",
+                        "Final semester and professional readiness"
+                    ];
+                    for(let i=1; i<=8; i++) {
+                        document.write(`
+                            <a href="/semester/${i}" class="bg-white/80 dark:bg-slate-900/40 border border-outline-variant/30 p-8 rounded-2xl hover:bg-white dark:hover:bg-slate-800 dark:border-slate-700 group transition-all hover:shadow-xl hover:-translate-y-2 relative overflow-hidden">
+                                <div class="absolute top-0 right-0 w-24 h-24 bg-primary/5 dark:bg-blue-400/5 rounded-bl-full translate-x-8 -translate-y-8 group-hover:scale-150 transition-transform"></div>
+                                <div class="flex justify-between items-start mb-6 relative z-10">
+                                    <span class="font-label-md text-primary bg-primary-fixed/50 px-3 py-1.5 rounded-lg dark:bg-blue-900/50 dark:text-blue-200">Semester ${i}</span>
+                                    <div class="w-8 h-8 rounded-full bg-surface-container dark:bg-slate-800 flex items-center justify-center group-hover:bg-primary dark:group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                                        <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
+                                    </div>
+                                </div>
+                                <h4 class="font-headline text-xl text-primary mb-3 dark:text-white">Semester ${i}</h4>
+                                <p class="text-on-surface-variant text-sm leading-relaxed dark:text-slate-400">${semesterDetails[i-1]}</p>
+                            </a>
+                        `);
+                    }
+                </script>
+</div>
+</div>
+</section>
+<!-- Why Choose Section -->
+<section class="py-32 dark:bg-[#0f172a]">
+<div class="max-w-container-max mx-auto px-margin-desktop">
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+<div class="p-12 rounded-[2rem] bg-primary text-on-primary lg:col-span-2 relative overflow-hidden group dark:bg-blue-900/40 dark:border dark:border-blue-800/50">
+<div class="absolute -right-20 -top-20 w-64 h-64 bg-white/10 rounded-full blur-3xl group-hover:scale-125 transition-transform duration-1000"></div>
+<i class="w-16 h-16 mb-8 text-secondary-fixed opacity-90 dark:text-teal-400" data-lucide="shield-check"></i>
+<h3 class="font-headline text-4xl mb-6 font-bold dark:text-white">Verified &amp; Organized</h3>
+<p class="text-xl opacity-70 leading-relaxed max-w-2xl dark:text-slate-300">Every single resource on AKTU Hub is verified by subject experts and organized meticulously so you spend less time searching and more time studying.</p>
+</div>
+<div class="p-12 rounded-[2rem] bg-surface-container border border-outline-variant flex flex-col justify-between group dark:bg-slate-900/40 dark:border-slate-800">
+<div>
+<i class="w-12 h-12 mb-6 text-primary group-hover:scale-110 transition-transform dark:text-blue-400" data-lucide="zap"></i>
+<h3 class="font-headline text-2xl mb-4 text-primary font-bold dark:text-white">Blazing Fast</h3>
+<p class="text-on-surface-variant text-base leading-relaxed dark:text-slate-400">Lightweight interface designed for speed, even on slow college networks.</p>
+</div>
+<div class="mt-8 pt-8 border-t border-outline-variant/50 dark:border-slate-800">
+<span class="text-label-sm font-bold uppercase tracking-widest text-primary/50 dark:text-slate-500">Efficiency First</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-primary text-on-primary pt-24 pb-12 dark:bg-[#080c14] dark:border-t dark:border-slate-900">
+<div class="max-w-container-max mx-auto px-margin-desktop">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-20">
+<div class="md:col-span-2">
+<a class="font-headline text-3xl font-extrabold block mb-6 tracking-tighter dark:text-white" href="#">AKTU Hub</a>
+<p class="text-lg opacity-60 max-w-sm leading-relaxed dark:text-slate-400">The ultimate companion for every AKTU student, simplifying your academic journey with quality resources.</p>
+<div class="mt-8 flex gap-4">
+<a class="p-3 bg-white/5 rounded-full hover:bg-white/10 transition-colors" href="#"><i class="w-5 h-5" data-lucide="twitter"></i></a>
+<a class="p-3 bg-white/5 rounded-full hover:bg-white/10 transition-colors" href="#"><i class="w-5 h-5" data-lucide="instagram"></i></a>
+<a class="p-3 bg-white/5 rounded-full hover:bg-white/10 transition-colors" href="#"><i class="w-5 h-5" data-lucide="github"></i></a>
+</div>
+</div>
+<div>
+<h4 class="font-headline text-xl mb-6 dark:text-white">Quick Links</h4>
+<ul class="space-y-4 font-label-md opacity-70 dark:text-slate-400">
+<li><a class="hover:text-secondary-fixed dark:hover:text-teal-400 transition-colors" href="#resources">Resources</a></li>
+<li><a class="hover:text-secondary-fixed dark:hover:text-teal-400 transition-colors" href="/cgpa">CGPA Calculator</a></li>
+<li><a class="hover:text-secondary-fixed dark:hover:text-teal-400 transition-colors" href="/dashboard">Dashboard</a></li>
+<li><a class="hover:text-secondary-fixed dark:hover:text-teal-400 transition-colors" href="/about">About Us</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-headline text-xl mb-6 dark:text-white">Support</h4>
+<ul class="space-y-4 font-label-md opacity-70 dark:text-slate-400">
+<li><a class="hover:text-secondary-fixed dark:hover:text-teal-400 transition-colors" href="/contact">Contact Support</a></li>
+<li><a class="hover:text-secondary-fixed dark:hover:text-teal-400 transition-colors" href="/faq">FAQs</a></li>
+<li><a class="hover:text-secondary-fixed dark:hover:text-teal-400 transition-colors" href="/terms">Privacy Policy</a></li>
+</ul>
+</div>
+</div>
+<div class="pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-6 dark:border-white/5">
+<div class="text-sm opacity-50 flex flex-col md:flex-row gap-4 items-center dark:text-slate-500">
+<span>© 2024 AKTU Hub. All rights reserved.</span>
+<span class="hidden md:block w-1 h-1 rounded-full bg-white/30"></span>
+<span>Made by <span class="font-semibold text-white/80">Adarsh</span> with Passion</span>
+</div>
+<div class="flex items-center gap-3 bg-white/5 px-4 py-2 rounded-full">
+<span class="relative flex h-2 w-2">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-secondary opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2 w-2 bg-secondary"></span>
+</span>
+<span class="text-xs font-label-md opacity-80 uppercase tracking-widest dark:text-slate-400">System Online</span>
+</div>
+</div>
+</div>
+</footer>
+<script>
+    // Initialize Lucide icons
+    lucide.createIcons();
+
+    // Search dropdown interaction
+    const searchInput = document.getElementById('global-search');
+    const searchResults = document.getElementById('search-results');
+    
+    searchInput.addEventListener('focus', () => {
+        searchResults.classList.remove('hidden');
+    });
+
+    document.addEventListener('click', (e) => {
+        if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+            searchResults.classList.add('hidden');
+        }
+    });
+
+    // CMD + K listener
+    document.addEventListener('keydown', (e) => {
+        if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+            e.preventDefault();
+            searchInput.focus();
+        }
+    });
+
+    // Intersection Observer for scroll animations
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('opacity-100', 'translate-y-0');
+                entry.target.classList.remove('opacity-0', 'translate-y-12');
+            }
+        });
+    }, observerOptions);
+
+    document.querySelectorAll('section').forEach((section, index) => {
+        if (index > 0) { // Skip hero as it has its own entry animation
+            section.classList.add('transition-all', 'duration-1000', 'opacity-0', 'translate-y-12');
+            observer.observe(section);
+        }
+    });
+</script>
+</body></html>
