@@ -9,11 +9,11 @@ function Hero() {
   };
 
   return (
-    <section className="hero-gradient pt-24 pb-20 overflow-hidden w-full border-b border-border-light transition-colors duration-300">
+    <section className="hero-gradient pt-40 pb-20 md:pt-48 md:pb-24 w-full border-b border-border-light transition-colors duration-300 relative z-10">
       <div className="max-w-4xl mx-auto px-6 text-center flex flex-col items-center">
         <div className="space-y-4">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight text-primary-text">
-            Welcome to <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-700 to-teal-500 dark:from-blue-400 dark:to-teal-300">AKTU Hub</span>
+            Welcome to <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary-text to-[#6B7280] dark:from-[#10B981] dark:to-[#34D399]">AKTU Hub</span>
           </h1>
           <p className="text-lg md:text-xl text-secondary-text max-w-2xl mx-auto leading-relaxed">
             Everything an AKTU student needs — Notes, PYQs, Syllabus, Results and More.

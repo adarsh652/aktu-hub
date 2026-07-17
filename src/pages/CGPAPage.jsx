@@ -302,7 +302,7 @@ function CGPAPage() {
   const finalCgpa = calculateCgpa();
 
   return (
-    <div className="max-w-6xl mx-auto px-6 py-12 w-full flex-grow">
+    <div className="max-w-6xl mx-auto px-6 py-12 w-full flex-grow mt-20 md:mt-24">
       {/* Breadcrumbs */}
       <div className="mb-6 flex items-center gap-2 text-sm text-secondary-text">
         <Link to="/" className="hover:text-primary-text transition-all-fast">Home</Link>

@@ -27,7 +27,7 @@ function AuthPage() {
   };
 
   return (
-    <div className="max-w-md mx-auto px-6 py-24 w-full flex-grow flex flex-col justify-center">
+    <div className="max-w-md mx-auto px-6 py-24 w-full flex-grow flex flex-col justify-center mt-12">
       <div className="bg-white border border-border-light rounded-custom-xl p-8 shadow-sm text-center">
         {/* Brand Logo */}
         <div className="flex justify-center mb-6">

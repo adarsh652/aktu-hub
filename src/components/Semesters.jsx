@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowLeft, ArrowRight, ArrowUpRight } from "lucide-react";
 
 function Semesters() {
   const semesters = [
@@ -15,39 +15,59 @@ function Semesters() {
 
   return (
     <section id="semesters" className="max-w-6xl mx-auto px-6 py-16 scroll-mt-20">
-      <div className="mb-12 max-w-2xl">
-        <h2 className="text-3xl font-extrabold tracking-tight text-primary-text mb-3">
-          Browse by Semester
-        </h2>
-        <p className="text-secondary-text text-sm md:text-base leading-relaxed">
-          Select your semester to discover a tailored repository of study materials, reference books, and academic tools.
-        </p>
+      {/* Header with Navigation arrows */}
+      <div className="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <div className="max-w-xl">
+          <h2 className="text-3xl font-extrabold tracking-tight text-primary-text mb-3">
+            Browse by Semester
+          </h2>
+          <p className="text-secondary-text text-sm md:text-base leading-relaxed">
+            Select your semester to discover a tailored repository of study materials, reference books, and academic tools.
+          </p>
+        </div>
+        <div className="flex gap-2 shrink-0">
+          <button 
+            className="p-3 border border-border-light rounded-full bg-bg-secondary hover:bg-bg-light transition-colors text-secondary-text cursor-pointer"
+            aria-label="Previous Page"
+          >
+            <ArrowLeft size={18} />
+          </button>
+          <button 
+            className="p-3 border border-border-light rounded-full bg-bg-secondary hover:bg-bg-light transition-colors text-secondary-text cursor-pointer"
+            aria-label="Next Page"
+          >
+            <ArrowRight size={18} />
+          </button>
+        </div>
       </div>
 
+      {/* Grid of Semesters */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {semesters.map((sem) => (
           <Link
             key={sem.num}
             to={`/semester/${sem.num}`}
-            className="bg-white/80 dark:bg-slate-900/40 border border-border-light p-8 rounded-custom-xl hover:bg-white dark:hover:bg-slate-800/80 group transition-all-fast hover:shadow-md hover:-translate-y-1 relative overflow-hidden flex flex-col justify-between min-h-[180px] focus:outline-none focus:ring-2 focus:ring-btn-dark focus:ring-offset-2"
+            className="bg-bg-secondary border border-border-light p-8 rounded-custom-xl hover:bg-white dark:hover:bg-slate-800/20 group transition-all duration-300 hover:shadow-xl hover:-translate-y-1 relative overflow-hidden flex flex-col justify-between min-h-[190px] focus:outline-none focus:ring-2 focus:ring-btn-dark focus:ring-offset-2"
           >
-            {/* Top right corner decorative circle */}
-            <div className="absolute top-0 right-0 w-20 h-20 bg-primary-text/5 dark:bg-white/5 rounded-bl-full translate-x-6 -translate-y-6 group-hover:scale-125 transition-transform duration-300"></div>
+            {/* Curved top-right decoration shape */}
+            <div className="absolute top-0 right-0 w-24 h-24 bg-btn-dark/5 rounded-bl-full translate-x-8 -translate-y-8 group-hover:scale-150 transition-transform duration-500 ease-out"></div>
 
-            <div className="flex justify-between items-center mb-6 relative z-10 w-full">
-              <span className="text-xs font-semibold px-3 py-1.5 rounded-lg bg-bg-secondary text-primary-text border border-border-light dark:bg-slate-800">
+            {/* Top row with badge and arrow button */}
+            <div className="flex justify-between items-start mb-6 relative z-10 w-full">
+              <span className="text-xs font-semibold px-3 py-1.5 rounded-lg bg-btn-dark/10 text-btn-dark transition-colors duration-200">
                 Semester {sem.num}
               </span>
-              <div className="w-8 h-8 rounded-full bg-bg-secondary border border-border-light dark:bg-slate-800 flex items-center justify-center group-hover:bg-btn-dark group-hover:text-white dark:group-hover:bg-white dark:group-hover:text-slate-900 transition-colors duration-200">
-                <ArrowUpRight size={14} />
+              <div className="w-8 h-8 rounded-full bg-bg-light text-secondary-text flex items-center justify-center group-hover:bg-btn-dark group-hover:text-white transition-all duration-300 ease-out">
+                <ArrowUpRight size={16} />
               </div>
             </div>
 
+            {/* Title and Description */}
             <div className="relative z-10">
-              <h4 className="text-lg font-bold text-primary-text mb-2">
+              <h4 className="text-xl font-bold text-primary-text mb-2 transition-colors duration-200">
                 Semester {sem.num}
               </h4>
-              <p className="text-xs text-secondary-text leading-relaxed">
+              <p className="text-sm text-secondary-text leading-relaxed">
                 {sem.desc}
               </p>
             </div>

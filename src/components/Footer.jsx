@@ -1,22 +1,54 @@
+import { Link } from "react-router-dom";
+
 function Footer() {
   return (
-    <footer className="w-full border-t border-border-light bg-bg-secondary py-12 mt-auto">
-      <div className="max-w-6xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
-        <div className="flex flex-col items-center md:items-start">
-          <div className="flex items-center select-none mb-2">
-            <img src="/logo.png" alt="AKTU HUB" className="h-7 w-auto object-contain" />
-          </div>
-          <p className="mt-1 text-sm text-secondary-text">
-            Made with ❤️ by <span className="font-medium text-primary-text">Adarsh</span>
+    <footer className="w-full border-t border-border-light bg-bg-light py-16 mt-auto transition-colors duration-300">
+      {/* Top section: Two columns */}
+      <div className="max-w-6xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 justify-between items-start gap-10">
+        {/* Left Column: Logo & Tagline */}
+        <div className="flex flex-col items-start gap-3">
+          <Link to="/" className="flex items-center select-none">
+            <img src="/logo.png" alt="AKTU HUB" className="h-6 w-auto object-contain" />
+          </Link>
+          <p className="text-sm text-secondary-text font-medium">Study smarter.</p>
+          <p className="text-xs text-secondary-text mt-1">
+            Developed by <span className="font-semibold text-primary-text">Adarsh</span>
           </p>
         </div>
-        
-        <div className="flex flex-wrap justify-center gap-x-8 gap-y-2 text-sm text-secondary-text">
-          <a href="/semester/1" className="hover:text-primary-text transition-all-fast">Resources</a>
-          <a href="/cgpa" className="hover:text-primary-text transition-all-fast">CGPA</a>
-          <a href="#" className="hover:text-primary-text transition-all-fast">About</a>
-          <a href="#" className="hover:text-primary-text transition-all-fast">Contact</a>
-          <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="hover:text-primary-text transition-all-fast">GitHub</a>
+
+        {/* Right Column: Navigation Links */}
+        <div className="flex flex-col md:items-end justify-start gap-3">
+          <span className="text-[10px] uppercase font-bold tracking-widest text-secondary-text opacity-70">
+            Navigation
+          </span>
+          <div className="flex flex-col gap-2.5 text-sm font-medium">
+            <Link to="/" className="text-secondary-text hover:text-primary-text transition-colors duration-200 text-left md:text-right">
+              Resources
+            </Link>
+            <Link to="/cgpa" className="text-secondary-text hover:text-primary-text transition-colors duration-200 text-left md:text-right">
+              CGPA Calculator
+            </Link>
+            <a href="#about" className="text-secondary-text hover:text-primary-text transition-colors duration-200 text-left md:text-right">
+              About
+            </a>
+            <a href="#contact" className="text-secondary-text hover:text-primary-text transition-colors duration-200 text-left md:text-right">
+              Contact
+            </a>
+          </div>
+        </div>
+      </div>
+
+      {/* Bottom section: Divider & Copyright */}
+      <div className="max-w-6xl mx-auto px-6 mt-12 pt-6 border-t border-border-light/60 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-secondary-text">
+        <span>© 2026 AKTU Hub • Version 1.0</span>
+        <div className="flex items-center gap-3">
+          <a href="#privacy" className="hover:text-primary-text transition-colors duration-200">
+            Privacy Policy
+          </a>
+          <span className="text-border-light/60 select-none">•</span>
+          <a href="#terms" className="hover:text-primary-text transition-colors duration-200">
+            Terms of Service
+          </a>
         </div>
       </div>
     </footer>
