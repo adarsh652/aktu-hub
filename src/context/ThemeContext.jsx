@@ -6,10 +6,6 @@ export function ThemeProvider({ children }) {
   const [theme, setTheme] = useState(() => {
     const saved = localStorage.getItem("aktu_hub_theme");
     if (saved) return saved;
-    // Default to system preference
-    if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
-      return "dark";
-    }
     return "light";
   });
 
