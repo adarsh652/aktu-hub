@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { ShieldAlert, ShieldCheck } from "lucide-react";
@@ -6,13 +6,20 @@ import { ShieldAlert, ShieldCheck } from "lucide-react";
 function AuthPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const { signInWithGoogle } = useAuth();
+  const { user, signInWithGoogle } = useAuth();
   
   const navigate = useNavigate();
   const location = useLocation();
 
   // Redirect to dashboard or home
   const from = location.state?.from?.pathname || "/dashboard";
+
+  // Auto-redirect if already logged in
+  useEffect(() => {
+    if (user) {
+      navigate(from, { replace: true });
+    }
+  }, [user, navigate, from]);
 
   const handleGoogleSignIn = async () => {
     setError("");
