@@ -6,6 +6,7 @@ import { ShieldAlert, ShieldCheck } from "lucide-react";
 function AuthPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [mode, setMode] = useState("login"); // "login" or "signup"
   const { user, signInWithGoogle } = useAuth();
   
   const navigate = useNavigate();
@@ -27,7 +28,7 @@ function AuthPage() {
     try {
       await signInWithGoogle();
     } catch (err) {
-      setError(err.message || "Failed to log in with Google.");
+      setError(err.message || "Failed to authenticate with Google.");
     } finally {
       setLoading(false);
     }
@@ -43,10 +44,12 @@ function AuthPage() {
 
         {/* Heading */}
         <h1 className="text-2xl font-bold tracking-tight text-primary-text mb-2">
-          Sign In to Your Account
+          {mode === "login" ? "Sign In to Your Account" : "Create Your Account"}
         </h1>
         <p className="text-sm text-secondary-text mb-8 max-w-xs mx-auto">
-          Access your OneView Mirror Dashboard, back up your GPA calculations, and browse resources.
+          {mode === "login"
+            ? "Access your OneView Mirror Dashboard, back up your GPA calculations, and browse resources."
+            : "Sign up in seconds using your Google account to track results and save your GPA calculations."}
         </p>
 
         {/* Error Banner */}
@@ -82,8 +85,41 @@ function AuthPage() {
               d="M12 24c3.24 0 5.97-1.077 7.96-2.927l-3.87-3c-1.077.727-2.463 1.155-4.09 1.155-3.155 0-5.83-2.127-6.78-4.99l-4 3.136C3.23 21.27 7.27 24 12 24z"
             />
           </svg>
-          <span>{loading ? "Connecting to Google..." : "Sign In with Google"}</span>
+          <span>
+            {loading
+              ? "Connecting to Google..."
+              : mode === "login"
+              ? "Sign In with Google"
+              : "Sign Up with Google"}
+          </span>
         </button>
+
+        {/* Switcher Text Link */}
+        <p className="mt-6 text-xs text-secondary-text">
+          {mode === "login" ? (
+            <>
+              New to AKTU Hub?{" "}
+              <button
+                type="button"
+                onClick={() => setMode("signup")}
+                className="font-bold text-primary-text hover:underline cursor-pointer bg-transparent border-0 p-0"
+              >
+                Sign Up Now
+              </button>
+            </>
+          ) : (
+            <>
+              Already have an account?{" "}
+              <button
+                type="button"
+                onClick={() => setMode("login")}
+                className="font-bold text-primary-text hover:underline cursor-pointer bg-transparent border-0 p-0"
+              >
+                Sign In Now
+              </button>
+            </>
+          )}
+        </p>
 
         {/* Security / Privacy Note */}
         <div className="mt-8 border-t border-border-light pt-6 flex items-center justify-center gap-2 text-xs text-secondary-text">
